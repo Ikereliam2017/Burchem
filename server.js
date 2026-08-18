@@ -15,7 +15,7 @@ app.use("/img", express.static(path.join(__dirname, "img")));
 
 // Ruta principal
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "usuario.html"));
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 // Simulación de base de datos en memoria
