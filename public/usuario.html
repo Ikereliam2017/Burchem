@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>👟 CALZADOS BURCHE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- CURSOR -->
+<div class="cursor" id="cursor"></div>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-logo">BURCHE</div>
+  <ul class="nav-links">
+    <li><a href="#inicio">Inicio</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#productos">Productos</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="inicio" class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <span class="hero-badge">✦ Colección 2026 Disponible</span>
+
+  <h1>
+    <span class="line1">CALZADOS</span>
+    <span class="line2">BURCHE</span>
+  </h1>
+
+  <p class="hero-sub">Los mejores zapatos deportivos del mercado</p>
+
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="num">410</div>
+      <div class="label">Modelos</div>
+    </div>
+    <div class="hero-stat" style="border-left: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.08); padding: 0 40px;">
+      <div class="num">15+</div>
+      <div class="label">Marcas</div>
+    </div>
+    <div class="hero-stat">
+      <div class="num">$18</div>
+      <div class="label">Desde</div>
+    </div>
+  </div>
+
+  <div class="hero-cta">
+    <a href="#productos" class="btn-hero-primary">Ver Colección 👟</a>
+    <a href="#nosotros" class="btn-hero-outline">Quiénes Somos</a>
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrapper">
+  <div class="marquee-track" id="marqueeTrack">
+    <span>ADIDAS ✦</span><span>NIKE ✦</span><span>NEW BALANCE ✦</span><span>PUMA ✦</span>
+    <span>CONVERSE ✦</span><span>TOMMY HILFIGER ✦</span><span>LACOSTE ✦</span><span>REEBOK ✦</span>
+    <span>SKECHERS ✦</span><span>VANS ✦</span><span>FILA ✦</span><span>LOUIS VUITTON ✦</span>
+    <span>ADIDAS ✦</span><span>NIKE ✦</span><span>NEW BALANCE ✦</span><span>PUMA ✦</span>
+    <span>CONVERSE ✦</span><span>TOMMY HILFIGER ✦</span><span>LACOSTE ✦</span><span>REEBOK ✦</span>
+    <span>SKECHERS ✦</span><span>VANS ✦</span><span>FILA ✦</span><span>LOUIS VUITTON ✦</span>
+  </div>
+</div>
+
+<!-- BRANDS -->
+<section class="section-brands">
+  <p class="section-label">Marcas disponibles</p>
+  <h2 class="section-title">Las Mejores <span>Marcas</span></h2>
+  <div class="brands-grid" id="brandsContainer"></div>
+</section>
+
+<!-- NOSOTROS -->
+<section id="nosotros">
+  <div class="nosotros-content">
+    <span class="tag">✦ Sobre Nosotros</span>
+    <h2>QUIÉNES<br>SOMOS</h2>
+    <p>Calzados Burche es una empresa dedicada a ofrecer calzado deportivo y casual de alta calidad para todos nuestros clientes.</p>
+    <p>Nuestro objetivo es brindar comodidad, estilo y durabilidad en cada par de zapatos que ofrecemos, con los mejores precios del mercado.</p>
+    <div class="nosotros-features">
+      <div class="feature-box">
+        <div class="icon">👟</div>
+        <h4>Alta Calidad</h4>
+        <p>Solo las mejores marcas internacionales</p>
+      </div>
+      <div class="feature-box">
+        <div class="icon">💰</div>
+        <h4>Mejor Precio</h4>
+        <p>Desde $18 — precio imbatible</p>
+      </div>
+      <div class="feature-box">
+        <div class="icon">🚀</div>
+        <h4>Entrega Rápida</h4>
+        <p>Coordinamos por WhatsApp</p>
+      </div>
+      <div class="feature-box">
+        <div class="icon">🏆</div>
+        <h4>+410 Modelos</h4>
+        <p>La mayor variedad disponible</p>
+      </div>
+    </div>
+  </div>
+  <div class="nosotros-visual">
+    <div class="nosotros-card">
+      <div class="nosotros-number">410</div>
+      <div class="nosotros-text">Modelos en stock</div>
+      <ul class="nosotros-list">
+        <li>Zapatillas deportivas y casuales</li>
+        <li>Tallas desde 30 hasta 46</li>
+        <li>Entrega a todo el país</li>
+        <li>Garantía de satisfacción</li>
+        <li>Atención personalizada 24/7</li>
+        <li>Pago por transferencia o efectivo</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTOS -->
+<section id="productos">
+  <div class="productos-header">
+    <p class="section-label">Catálogo completo</p>
+    <h2 class="section-title">Nuestros <span>Productos</span></h2>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Buscar por marca o modelo..." oninput="filtrarProductos()">
+      <button class="search-btn" onclick="filtrarProductos()">🔍</button>
+    </div>
+  </div>
+
+  <div class="filter-bar" id="filterBar"></div>
+
+  <div class="counter-bar">Mostrando <span id="counterNum">0</span> de <span id="counterTotal">410</span> productos</div>
+
+  <div class="productos" id="listaProductos"></div>
+
+  <div class="load-more-wrap">
+    <button class="btn-load-more" id="btnLoadMore" onclick="cargarMas()">Cargar más productos ↓</button>
+  </div>
+</section>
+
+<!-- CONTACTO / FOOTER -->
+<footer id="contacto">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo">BURCHE</div>
+      <p>Especialistas en calzado deportivo y casual de alta calidad. Más de 410 modelos disponibles de las mejores marcas del mundo.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navegación</h4>
+      <ul>
+        <li>Inicio</li>
+        <li>Nosotros</li>
+        <li>Productos</li>
+        <li>Contacto</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <ul>
+        <li>📱 0968806312</li>
+        <li>📱 0991216329</li>
+        <li>💬 WhatsApp disponible</li>
+        <li>⏰ Atención 24/7</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2026 <span>Calzados Burche</span> — Todos los derechos reservados. Hecho con ❤️ en Ecuador 🇪🇨
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-img-wrap">
+      <img id="modalImg" src="" alt="">
+      <span class="modal-cerrar" onclick="cerrarModal()">✕</span>
+    </div>
+    <div class="modal-body">
+      <h2 id="modalTitulo"></h2>
+      <div class="modal-precios">
+        <div class="precio-pill">
+          <div class="talla">Hasta talla 34</div>
+          <div class="valor">$18</div>
+        </div>
+        <div class="precio-pill">
+          <div class="talla">Desde talla 35</div>
+          <div class="valor">$20</div>
+        </div>
+      </div>
+      <p id="modalDescripcion"></p>
+      <div class="modal-wa-btns">
+        <a id="btnWa1" class="btn-wa" target="_blank">
+          <span class="wa-icon">🟢</span> WhatsApp 0968806312
+        </a>
+        <a id="btnWa2" class="btn-wa alt" target="_blank">
+          <span class="wa-icon">🟢</span> WhatsApp 0991216329
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHATSAPP FLOTANTE -->
+<div class="wa-float-container">
+  <div class="wa-float-menu" id="waMenu">
+    <a href="https://wa.me/593968806312?text=Hola%20👋%20Estoy%20interesado%20en%20sus%20zapatillas" target="_blank">
+      📱 0968806312
+    </a>
+    <a href="https://wa.me/593991216329?text=Hola%20👋%20Estoy%20interesado%20en%20sus%20zapatillas" target="_blank">
+      📱 0991216329
+    </a>
+  </div>
+  <div class="wa-float-btn" onclick="toggleWaMenu()">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+  </div>
+</div>
+
+<script src="usuario.js"></script>
+</body>
+</html>
