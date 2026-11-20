@@ -1,12 +1,33 @@
-// ── CURSOR ──
+// ── CURSOR (solo en PC con mouse) ──
 const cursor = document.getElementById('cursor');
-document.addEventListener('mousemove', e => {
-  cursor.style.left = e.clientX - 7 + 'px';
-  cursor.style.top = e.clientY - 7 + 'px';
-});
-document.addEventListener('mousedown', () => cursor.style.transform = 'scale(2)');
-document.addEventListener('mouseup', () => cursor.style.transform = 'scale(1)');
- 
+const esPC = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+if (esPC && cursor) {
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX - 7 + 'px';
+    cursor.style.top = e.clientY - 7 + 'px';
+  });
+  document.addEventListener('mousedown', () => cursor.style.transform = 'scale(2)');
+  document.addEventListener('mouseup', () => cursor.style.transform = 'scale(1)');
+} else if (cursor) {
+  cursor.remove();
+}
+
+// ── MENÚ MÓVIL ──
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+if (navToggle) {
+  navToggle.addEventListener('click', () => {
+    const abierto = navLinks.classList.toggle('open');
+    navToggle.classList.toggle('open', abierto);
+    navToggle.setAttribute('aria-expanded', abierto);
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    navToggle.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }));
+}
+
 // ── PRODUCTOS DATA ──
 const nombres410 = [
   "ADIDAS","ADIDAS","ADIDAS","ADIDAS","ADIDAS","ADIDAS",
@@ -65,6 +86,7 @@ const nombres410 = [
 ];
  
 const productos = nombres410.map((nombre, i) => ({
+  id: i,
   nombre,
   descripcion: "Zapatilla deportiva cómoda y resistente. Ideal para uso diario, entrenamiento y caminatas. Disponible en múltiples colores y tallas.",
   imagen: `img/${i + 1}.jpeg`
@@ -78,133 +100,174 @@ const brandColors = {
   'Vans': '#FF9800', 'Fila': '#00BCD4', 'Louis Vuitton': '#795548'
 };
  
-const brands = [...new Set(nombres410.map(n => {
-  if (n.toLowerCase().includes('adidas')) return 'ADIDAS';
-  if (n.toLowerCase().includes('nike')) return 'Nike';
-  if (n.toLowerCase().includes('new balance')) return 'New Balance';
-  if (n.toLowerCase().includes('puma')) return 'PUMA';
-  if (n.toLowerCase().includes('converse')) return 'Converse';
-  if (n.toLowerCase().includes('tommy')) return 'TOMMY HILFIGER';
-  if (n.toLowerCase().includes('lacoste')) return 'LACOSTE';
-  if (n.toLowerCase().includes('reebok')) return 'Reebok';
-  if (n.toLowerCase().includes('skecher')) return 'Skechers';
-  if (n.toLowerCase().includes('vans')) return 'Vans';
-  if (n.toLowerCase().includes('fila')) return 'Fila';
-  if (n.toLowerCase().includes('louis')) return 'Louis Vuitton';
-  return null;
-}).filter(Boolean))];
+const brands = [...new Set(nombres410.map(n => marcaDe(n)).filter(Boolean))];
  
-// Build brands
+// Detecta la marca de un nombre de producto
+function marcaDe(nombre) {
+  const n = nombre.toLowerCase();
+  if (n.includes('adidas')) return 'ADIDAS';
+  if (n.includes('nike')) return 'Nike';
+  if (n.includes('new balance')) return 'New Balance';
+  if (n.includes('puma')) return 'PUMA';
+  if (n.includes('converse')) return 'Converse';
+  if (n.includes('tommy')) return 'TOMMY HILFIGER';
+  if (n.includes('lacoste')) return 'LACOSTE';
+  if (n.includes('reebok')) return 'Reebok';
+  if (n.includes('skecher')) return 'Skechers';
+  if (n.includes('vans')) return 'Vans';
+  if (n.includes('fila')) return 'Fila';
+  if (n.includes('louis')) return 'Louis Vuitton';
+  return null;
+}
+
+// ── ESTADO ──
+const POR_PAGINA = 24;
+let productosMostrados = 0;
+let productosFiltrados = [...productos];
+let activeFilter = 'Todos';
+
+// Build brands (al tocar una marca se filtra el catálogo y se baja a productos)
 const brandsContainer = document.getElementById('brandsContainer');
 brands.forEach(b => {
-  const pill = document.createElement('div');
+  const pill = document.createElement('button');
+  pill.type = 'button';
   pill.className = 'brand-pill';
   pill.textContent = b;
   pill.addEventListener('click', () => {
-    activeBrand = activeBrand === b.toLowerCase() ? '' : b.toLowerCase();
-    document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active'));
-    filtrarProductos();
+    aplicarFiltro(b);
+    document.getElementById('productos').scrollIntoView({ behavior: 'smooth' });
   });
   brandsContainer.appendChild(pill);
 });
- 
+
 // ── FILTER BAR ──
-const filtersData = ['Todos', 'Adidas', 'Nike', 'New Balance', 'Puma', 'Converse', 'Tommy', 'Lacoste', 'Reebok', 'Skechers'];
+const filtersData = ['Todos', 'Adidas', 'Nike', 'New Balance', 'Puma', 'Converse', 'Tommy', 'Lacoste', 'Reebok', 'Skechers', 'Vans', 'Fila'];
 const filterBar = document.getElementById('filterBar');
-let activeFilter = 'Todos';
-let activeBrand = '';
- 
+
 filtersData.forEach(f => {
   const btn = document.createElement('button');
+  btn.type = 'button';
   btn.className = 'filter-btn' + (f === 'Todos' ? ' active' : '');
   btn.textContent = f;
-  btn.onclick = () => {
-    activeFilter = f;
-    document.querySelectorAll('.filter-btn').forEach(el => el.classList.remove('active'));
-    btn.classList.add('active');
-    productosMostrados = 24;
-    filtrarProductos();
-  };
+  btn.dataset.filtro = f;
+  btn.onclick = () => aplicarFiltro(f);
   filterBar.appendChild(btn);
 });
- 
+
+function aplicarFiltro(f) {
+  // Normaliza nombres de marca a los filtros (ej. "TOMMY HILFIGER" -> "Tommy")
+  const clave = f.toLowerCase().includes('tommy') ? 'tommy'
+              : f.toLowerCase().includes('skecher') ? 'skecher'
+              : f.toLowerCase();
+  activeFilter = clave === 'todos' ? 'Todos' : clave;
+  document.querySelectorAll('.filter-btn').forEach(el => {
+    const k = el.dataset.filtro.toLowerCase();
+    el.classList.toggle('active', k === clave || (clave === 'skecher' && k === 'skechers'));
+  });
+  filtrarProductos();
+}
+
 // ── RENDER ──
-let productosMostrados = 24;
-let productosFiltrados = [...productos];
- 
 function getBadge(nombre) {
-  if (nombre.toLowerCase().includes('nike')) return 'Nike';
-  if (nombre.toLowerCase().includes('adidas')) return 'Adidas';
-  if (nombre.toLowerCase().includes('puma')) return 'Puma';
-  if (nombre.toLowerCase().includes('new balance')) return 'NB';
-  if (nombre.toLowerCase().includes('converse')) return 'Converse';
-  if (nombre.toLowerCase().includes('tommy')) return 'Tommy';
-  if (nombre.toLowerCase().includes('lacoste')) return 'Lacoste';
-  if (nombre.toLowerCase().includes('reebok')) return 'Reebok';
-  if (nombre.toLowerCase().includes('vans')) return 'Vans';
+  const n = nombre.toLowerCase();
+  if (n.includes('nike')) return 'Nike';
+  if (n.includes('adidas')) return 'Adidas';
+  if (n.includes('puma')) return 'Puma';
+  if (n.includes('new balance')) return 'NB';
+  if (n.includes('converse')) return 'Converse';
+  if (n.includes('tommy')) return 'Tommy';
+  if (n.includes('lacoste')) return 'Lacoste';
+  if (n.includes('reebok')) return 'Reebok';
+  if (n.includes('vans')) return 'Vans';
+  if (n.includes('skecher')) return 'Skechers';
+  if (n.includes('fila')) return 'Fila';
   return '★';
 }
- 
-function filtrarProductos() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const f = activeFilter.toLowerCase();
- 
-  productosFiltrados = productos.filter(p => {
-    const matchSearch = p.nombre.toLowerCase().includes(q);
-    const matchFilter = f === 'todos' || p.nombre.toLowerCase().includes(f);
-    return matchSearch && matchFilter;
-  });
- 
-  productosMostrados = 24;
-  renderProductos();
+
+const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="200"><rect width="100%" height="100%" fill="#1C1C28"/><text x="50%" y="55%" font-size="60" text-anchor="middle">👟</text></svg>'
+);
+
+function escapar(t) {
+  return t.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 }
- 
-function renderProductos() {
-  const lista = document.getElementById('listaProductos');
-  const mostrar = productosFiltrados.slice(0, productosMostrados);
- 
-  lista.innerHTML = mostrar.map((p, i) => {
-    const idx = productos.indexOf(p);
-    return `
-      <div class="producto" style="animation-delay: ${(i % 24) * 0.04}s">
-        <div class="producto-img-wrap">
-          <img src="${p.imagen}" alt="${p.nombre}" loading="lazy" onerror="this.src='https://via.placeholder.com/240x200/16161F/FF3C00?text=👟'">
-          <span class="producto-badge">${getBadge(p.nombre)}</span>
-          <span class="producto-num">#${String(idx+1).padStart(3,'0')}</span>
+
+function tarjetaHTML(p, i) {
+  const idx = p.id;
+  const nombre = escapar(p.nombre.trim());
+  return `
+    <div class="producto" style="animation-delay: ${(i % POR_PAGINA) * 0.03}s">
+      <div class="producto-img-wrap" onclick="verDetalles(${idx})">
+        <img src="${p.imagen}" alt="${nombre}" loading="lazy" onerror="this.onerror=null;this.src=PLACEHOLDER">
+        <span class="producto-badge">${getBadge(p.nombre)}</span>
+        <span class="producto-num">#${String(idx + 1).padStart(3, '0')}</span>
+      </div>
+      <div class="producto-body">
+        <h3 title="${nombre}">${nombre}</h3>
+        <div class="producto-prices">
+          <span>T.34 <span class="price">$18</span></span>
+          <span>T.35+ <span class="price">$20</span></span>
         </div>
-        <div class="producto-body">
-          <h3 title="${p.nombre}">${p.nombre}</h3>
-          <div class="producto-prices">
-            <span>T.34 <span class="price">$18</span></span>
-            <span>T.35+ <span class="price">$20</span></span>
-          </div>
-          <div class="producto-btns">
-            <button class="btn-details" onclick="verDetalles(${idx})">Ver Detalles</button>
-            <a href="${p.imagen}" download class="btn-download">⬇</a>
-          </div>
+        <div class="producto-btns">
+          <button type="button" class="btn-details" onclick="verDetalles(${idx})">Ver Detalles</button>
+          <a href="${p.imagen}" download class="btn-download" aria-label="Descargar foto">⬇</a>
         </div>
       </div>
-    `;
-  }).join('');
- 
-  document.getElementById('counterNum').textContent = mostrar.length;
+    </div>`;
+}
+
+function filtrarProductos() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const f = activeFilter.toLowerCase();
+
+  productosFiltrados = productos.filter(p => {
+    const n = p.nombre.toLowerCase();
+    const matchSearch = !q || n.includes(q);
+    const matchFilter = f === 'todos' || n.includes(f);
+    return matchSearch && matchFilter;
+  });
+
+  // Reinicia la lista y muestra la primera página
+  document.getElementById('listaProductos').innerHTML = '';
+  productosMostrados = 0;
+  mostrarSiguientes();
+}
+
+// Agrega los siguientes productos DEBAJO de los que ya se ven (sin borrar ni saltar)
+function mostrarSiguientes() {
+  const lista = document.getElementById('listaProductos');
+  const desde = productosMostrados;
+  const hasta = Math.min(desde + POR_PAGINA, productosFiltrados.length);
+  const nuevos = productosFiltrados.slice(desde, hasta);
+
+  lista.insertAdjacentHTML('beforeend', nuevos.map((p, i) => tarjetaHTML(p, i)).join(''));
+  productosMostrados = hasta;
+
+  const vacio = document.getElementById('sinResultados');
+  vacio.style.display = productosFiltrados.length === 0 ? 'block' : 'none';
+
+  document.getElementById('counterNum').textContent = productosMostrados;
   document.getElementById('counterTotal').textContent = productosFiltrados.length;
- 
+
   const btnMore = document.getElementById('btnLoadMore');
-  btnMore.style.display = productosMostrados >= productosFiltrados.length ? 'none' : 'inline-block';
+  const restantes = productosFiltrados.length - productosMostrados;
+  if (restantes > 0) {
+    btnMore.style.display = 'inline-block';
+    btnMore.textContent = `Cargar más productos (${restantes} restantes) ↓`;
+  } else {
+    btnMore.style.display = 'none';
+  }
 }
- 
+
 function cargarMas() {
-  productosMostrados += 24;
-  renderProductos();
-  document.getElementById('listaProductos').scrollIntoView({ behavior: 'smooth', block: 'end' });
+  mostrarSiguientes();
 }
- 
+
 // ── MODAL ──
 function verDetalles(index) {
   const p = productos[index];
   document.getElementById('modalImg').src = p.imagen;
-  document.getElementById('modalTitulo').textContent = p.nombre;
+  document.getElementById('modalTitulo').textContent = p.nombre.trim();
   document.getElementById('modalDescripcion').textContent = p.descripcion;
  
   const msg = encodeURIComponent(`Hola 👋 Estoy interesado en: ${p.nombre}\n- Hasta talla 34: $18\n- Desde talla 35: $20`);
@@ -213,11 +276,13 @@ function verDetalles(index) {
  
   document.getElementById('modal').classList.add('activo');
   document.body.style.overflow = 'hidden';
+  document.body.classList.add('modal-abierto');
 }
  
 function cerrarModal() {
   document.getElementById('modal').classList.remove('activo');
   document.body.style.overflow = '';
+  document.body.classList.remove('modal-abierto');
 }
  
 document.getElementById('modal').addEventListener('click', e => {
@@ -230,9 +295,14 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarModal(
 function toggleWaMenu() {
   document.getElementById('waMenu').classList.toggle('open');
 }
+document.addEventListener('click', e => {
+  if (!e.target.closest('.wa-float-container')) {
+    document.getElementById('waMenu').classList.remove('open');
+  }
+});
  
 // ── INIT ──
-renderProductos();
+filtrarProductos();
  
 // Intersection observer for scroll animations
 const observer = new IntersectionObserver(entries => {
