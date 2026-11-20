@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>👟 CALZADOS BURCHE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0A0F">
+  <meta name="description" content="Calzados Burche: más de 410 modelos de zapatos deportivos y casuales desde $18. Pedidos por WhatsApp.">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
@@ -23,7 +25,10 @@
 <!-- NAVBAR -->
 <nav>
   <div class="nav-logo">BURCHE</div>
-  <ul class="nav-links">
+  <button class="nav-toggle" id="navToggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="navLinks">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
     <li><a href="#inicio">Inicio</a></li>
     <li><a href="#nosotros">Nosotros</a></li>
     <li><a href="#productos">Productos</a></li>
@@ -50,7 +55,7 @@
       <div class="num">410</div>
       <div class="label">Modelos</div>
     </div>
-    <div class="hero-stat" style="border-left: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.08); padding: 0 40px;">
+    <div class="hero-stat hero-stat-mid">
       <div class="num">15+</div>
       <div class="label">Marcas</div>
     </div>
@@ -142,8 +147,8 @@
     <p class="section-label">Catálogo completo</p>
     <h2 class="section-title">Nuestros <span>Productos</span></h2>
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Buscar por marca o modelo..." oninput="filtrarProductos()">
-      <button class="search-btn" onclick="filtrarProductos()">🔍</button>
+      <input type="search" id="searchInput" placeholder="Buscar por marca o modelo..." oninput="filtrarProductos()" enterkeyhint="search">
+      <button class="search-btn" type="button" onclick="filtrarProductos()" aria-label="Buscar">🔍</button>
     </div>
   </div>
 
@@ -152,9 +157,10 @@
   <div class="counter-bar">Mostrando <span id="counterNum">0</span> de <span id="counterTotal">410</span> productos</div>
 
   <div class="productos" id="listaProductos"></div>
+  <p class="sin-resultados" id="sinResultados">No se encontraron productos. Prueba con otra marca o modelo.</p>
 
   <div class="load-more-wrap">
-    <button class="btn-load-more" id="btnLoadMore" onclick="cargarMas()">Cargar más productos ↓</button>
+    <button class="btn-load-more" id="btnLoadMore" type="button" onclick="cargarMas()">Cargar más productos ↓</button>
   </div>
 </section>
 
@@ -168,17 +174,17 @@
     <div class="footer-col">
       <h4>Navegación</h4>
       <ul>
-        <li>Inicio</li>
-        <li>Nosotros</li>
-        <li>Productos</li>
-        <li>Contacto</li>
+        <li><a href="#inicio">Inicio</a></li>
+        <li><a href="#nosotros">Nosotros</a></li>
+        <li><a href="#productos">Productos</a></li>
+        <li><a href="#contacto">Contacto</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h4>Contacto</h4>
       <ul>
-        <li>📱 0968806312</li>
-        <li>📱 0991216329</li>
+        <li><a href="https://wa.me/593968806312" target="_blank" rel="noopener">📱 0968806312</a></li>
+        <li><a href="https://wa.me/593991216329" target="_blank" rel="noopener">📱 0991216329</a></li>
         <li>💬 WhatsApp disponible</li>
         <li>⏰ Atención 24/7</li>
       </ul>
@@ -194,7 +200,7 @@
   <div class="modal-box">
     <div class="modal-img-wrap">
       <img id="modalImg" src="" alt="">
-      <span class="modal-cerrar" onclick="cerrarModal()">✕</span>
+      <button type="button" class="modal-cerrar" onclick="cerrarModal()" aria-label="Cerrar">✕</button>
     </div>
     <div class="modal-body">
       <h2 id="modalTitulo"></h2>
@@ -231,8 +237,8 @@
       📱 0991216329
     </a>
   </div>
-  <div class="wa-float-btn" onclick="toggleWaMenu()">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+  <div class="wa-float-btn" onclick="toggleWaMenu()" role="button" aria-label="WhatsApp">
+    <svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true"><path fill="#fff" d="M16 3C8.8 3 3 8.6 3 15.6c0 2.5.8 4.9 2.1 6.9L3.6 28.5l6.2-1.6c1.9 1 4 1.5 6.2 1.5 7.2 0 13-5.6 13-12.6S23.2 3 16 3zm0 23c-2 0-3.9-.5-5.5-1.5l-.4-.2-3.7 1 1-3.6-.3-.4C6 19.6 5.3 17.6 5.3 15.6 5.3 9.9 10.1 5.3 16 5.3s10.7 4.6 10.7 10.3S21.9 26 16 26zm5.9-7.7c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6c.2-.2.2-.3.3-.6.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.7s1.2 3.2 1.4 3.4c.2.2 2.4 3.6 5.8 5 .8.3 1.4.5 1.9.7.8.3 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
   </div>
 </div>
 
